@@ -6,7 +6,7 @@
 def request_user_input
 	print "What do you want to do [c - cipher/d - decipher/e - exit]? "
 	desired_action = gets.chomp
-	# If user wants do cipher text
+	# If user wants to cipher text
 	if desired_action == "c"
 		print "Insert the text to be ciphered: "
 	  text_to_be_ciphered = gets.chomp
