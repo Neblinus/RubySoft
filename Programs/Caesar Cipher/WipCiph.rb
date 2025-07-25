@@ -4,26 +4,26 @@
 
 # Request user input
 def request_user_input
-	print "What do you want to do [c - cipher/d - decipher/e - exit]? "
-	desired_action = gets.chomp
-	# If user wants to cipher text
-	if desired_action == "c"
-		print "Insert the text to be ciphered: "
-	  text_to_be_ciphered = gets.chomp
-	  print "Insert the shifting factor: "
-	  shifting_factor = gets.to_i
-	  return text_to_be_ciphered, shifting_factor, desired_action
-	# If user wants to decipher text
+  print "What do you want to do [c - cipher/d - decipher/e - exit]? "
+  desired_action = gets.chomp
+  # If user wants to cipher text
+  if desired_action == "c"
+    print "Insert the text to be ciphered: "
+    text_to_be_ciphered = gets.chomp
+    print "Insert the shifting factor: "
+    shifting_factor = gets.to_i
+    return text_to_be_ciphered, shifting_factor, desired_action
+  # If user wants to decipher text
   elsif desired_action == "d"
-	  print "Insert the text to be deciphered: "
-	  text_to_be_deciphered = gets.chomp
-	  print "Insert the shifting factor: "
-	  shifting_factor = gets.to_i
-	  return text_to_be_deciphered, shifting_factor, desired_action
-	# If user wants to exit
-	else
-		exit(0)
-	end
+    print "Insert the text to be deciphered: "
+    text_to_be_deciphered = gets.chomp
+    print "Insert the shifting factor: "
+    shifting_factor = gets.to_i
+    return text_to_be_deciphered, shifting_factor, desired_action
+  # If user wants to exit
+  else
+    exit(0)
+  end
 end
 
 # Performs ciphering algorithm based on alphabet letters range
@@ -175,7 +175,7 @@ end
 keep_running = "y"
 until keep_running == "n" do
 	system 'clear'
-	puts "Welcome to WipCiphs 1.0!!"
+	puts "Welcome to WipCiph!!"
 	# Get user input as an array with the text, the shifting factor and the
 	# desired action for the program to perform
 	user_input = request_user_input
