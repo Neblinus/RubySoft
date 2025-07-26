@@ -1,4 +1,5 @@
-# Caesar cipher implementation using right shift
+# Caesar cipher/decipher implementation using right shift
+# Made by Neblinus using Ruby 3.2.0
 
 # Methods implementations
 
