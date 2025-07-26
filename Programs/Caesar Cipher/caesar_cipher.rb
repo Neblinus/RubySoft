@@ -5,26 +5,30 @@
 
 # Request user input
 def request_user_input
-  print "What do you want to do [c - cipher/d - decipher/e - exit]? "
-  desired_action = gets.chomp
-  # If user wants to cipher text
-  if desired_action == "c"
-    print "Insert the text to be ciphered: "
-    text_to_be_ciphered = gets.chomp
-    print "Insert the shifting factor: "
-    shifting_factor = gets.to_i
-    return text_to_be_ciphered, shifting_factor, desired_action
-  # If user wants to decipher text
-  elsif desired_action == "d"
-    print "Insert the text to be deciphered: "
-    text_to_be_deciphered = gets.chomp
-    print "Insert the shifting factor: "
-    shifting_factor = gets.to_i
-    return text_to_be_deciphered, shifting_factor, desired_action
-  # If user wants to exit
-  else
-    exit(0)
+  desired_action = ""
+  until ["c", "d", "e"].include?(desired_action) do
+    print "What do you want to do [c - cipher/d - decipher/e - exit]? "
+    desired_action = gets.chomp
   end
+  case desired_action
+    # When user wants to cipher text
+    when "c"
+      print "Insert the text to be ciphered: "
+      text_to_be_ciphered = gets.chomp
+      print "Insert the shifting factor: "
+      shifting_factor = gets.to_i
+      return text_to_be_ciphered, shifting_factor, desired_action
+    # When user wants to decipher text
+    when "d"
+      print "Insert the text to be deciphered: "
+      text_to_be_deciphered = gets.chomp
+      print "Insert the shifting factor: "
+      shifting_factor = gets.to_i
+      return text_to_be_deciphered, shifting_factor, desired_action
+    # When user wants to exit
+    else
+      desired_action
+  end 
 end
 
 # Performs ciphering algorithm
@@ -158,19 +162,18 @@ end
 
 # Convert the ciphered/deciphered string to its original case
 def adjust_to_original_case(uppercase_chars, original_string)
-  adjusted_chars = Array.new(uppercase_chars.length)
   original_chars = original_string.split("")
   uppercase_ascii_range = ("A".ord.."Z".ord)
   # Loop through the original unciphered string, checking if the ciphered
   # analog has different case and performing the needed tweaks
   original_chars.each_with_index do |current_char, current_char_index|
     unless uppercase_ascii_range.include?(current_char.ord)
-      adjusted_chars[current_char_index] = uppercase_chars[current_char_index].downcase
+      uppercase_chars[current_char_index] = uppercase_chars[current_char_index].downcase
     else
-      adjusted_chars[current_char_index] = uppercase_chars[current_char_index]
+      uppercase_chars[current_char_index] = uppercase_chars[current_char_index]
     end
   end
-  adjusted_chars.join
+  uppercase_chars.join
 end
 
 # Main
@@ -184,12 +187,18 @@ until keep_running == "n" do
   # passing it as argument
   $SHIFTING_FACTOR = user_input[1]
   # Call the adequate deciphering/ciphering algorithm and output its result
-  if user_input.last == "c" 
-    ciphered_text = perform_caesar_ciphering(user_input.first)
-    puts "Ciphered text: #{adjust_to_original_case(ciphered_text, user_input.first)}"	  
-  elsif user_input.last == "d"
-    deciphered_text = perform_caesar_deciphering(user_input.first)
-    puts "Deciphered text: #{adjust_to_original_case(deciphered_text, user_input.first)}"
+  case user_input.last
+    # For ciphering text
+    when "c"
+      ciphered_text = perform_caesar_ciphering(user_input.first)
+      puts "Ciphered text: #{adjust_to_original_case(ciphered_text, user_input.first)}"
+    # For deciphering text
+    when "d"
+      deciphered_text = perform_caesar_deciphering(user_input.first)
+      puts "Deciphered text: #{adjust_to_original_case(deciphered_text, user_input.first)}"
+    # For exiting program
+    else
+      exit(0)
   end
   # Confirmation to keep running
   puts "Do you want to perform another action? "
