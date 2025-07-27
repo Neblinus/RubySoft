@@ -10,25 +10,37 @@ def request_user_input
     print "What do you want to do [c - cipher/d - decipher/e - exit]? "
     desired_action = gets.chomp
   end
+  # Avoid repetition of print statements
+  print "Insert the text: "
   case desired_action
-    # When user wants to cipher text
-    when "c"
-      print "Insert the text to be ciphered: "
-      text_to_be_ciphered = gets.chomp
-      print "Insert the shifting factor: "
-      shifting_factor = gets.to_i
-      return text_to_be_ciphered, shifting_factor, desired_action
-    # When user wants to decipher text
-    when "d"
-      print "Insert the text to be deciphered: "
-      text_to_be_deciphered = gets.chomp
-      print "Insert the shifting factor: "
-      shifting_factor = gets.to_i
-      return text_to_be_deciphered, shifting_factor, desired_action
+    # Common actions for both ciphering and deciphering
+    when "c", "d"
+      user_text = gets.chomp
+      valid_shifting_factor = get_valid_shifting_factor
     # When user wants to exit
     else
       desired_action
-  end 
+  end
+  return user_text, valid_shifting_factor, desired_action
+end
+
+# Get a valid shifting factor from the user
+def get_valid_shifting_factor
+  raw_shifting_factor = nil
+  is_valid_shifting_factor = false
+  until is_valid_shifting_factor do
+    print "Insert the shifting factor [any positive integer]: "
+    raw_shifting_factor = gets.chomp
+    # Loop through the user input, checking whether each char is a number
+    raw_shifting_factor.split("").each do |unverified_char|
+      unless ("0".."9").to_a.include?(unverified_char)
+        is_valid_shifting_factor = false
+      else
+        is_valid_shifting_factor = true
+      end
+    end
+  end
+  raw_shifting_factor.to_i
 end
 
 # Performs ciphering algorithm
