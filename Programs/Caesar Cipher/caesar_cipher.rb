@@ -17,48 +17,43 @@ def request_user_input
     when "c", "d"
       user_text = gets.chomp
       valid_shifting_factor = get_valid_shifting_factor
+      return user_text, valid_shifting_factor, desired_action
     # When user wants to exit
     else
       desired_action
   end
-  return user_text, valid_shifting_factor, desired_action
 end
 
 # Get a valid shifting factor from the user
 def get_valid_shifting_factor
-  raw_shifting_factor = nil
-  is_valid_shifting_factor = false
-  until is_valid_shifting_factor do
+  raw_shifting_factor = ""
+  has_non_digit_char = /\D/.match?(raw_shifting_factor)
+  # Ask the user for input
+  loop do
     print "Insert the shifting factor [any positive integer]: "
     raw_shifting_factor = gets.chomp
-    # Loop through the user input, checking whether each char is a number
-    raw_shifting_factor.split("").each do |unverified_char|
-      unless ("0".."9").to_a.include?(unverified_char)
-        is_valid_shifting_factor = false
-      else
-        is_valid_shifting_factor = true
-      end
-    end
+    break if not has_non_digit_char
   end
   raw_shifting_factor.to_i
 end
 
 # Performs ciphering algorithm
 def perform_caesar_ciphering(original_input)
-  alphabet_letters = ("A".."Z")
-  numbers_ascii_range = ("0".ord.."9".ord)
-  # Parse input to array of strings, all uppercase, for easier manipulation
+  # Regex used for easily identifying if a char is number, letter or else
+  alphabet_regex = /[a-zA-Z]/
+  numbers_regex = /[0-9]/
+  # Use input as uppercase char-per-char array for easier manipulation
   input_chars = original_input.upcase.split("")
   ciphered_output = Array.new(input_chars.length)
-  # Loop through the input array, ciphering the chars individually
+  # Loop through the unciphered chars getting the ciphered analog
   input_chars.each_with_index do |current_char, current_char_index|
-    # If current char is a letter
-    if alphabet_letters.include?(current_char)
+    # If the current char is a letter
+    if alphabet_regex.match?(current_char)
       ciphered_output[current_char_index] = cipher_letters(current_char)
-    # If current char is a number
-    elsif numbers_ascii_range.include?(current_char.ord)
+    # If the current char is a number
+    elsif numbers_regex.match?(current_char)
       ciphered_output[current_char_index] = cipher_numbers(current_char.to_i)
-    # If current char is anything else (puntuaction, etc)
+    # If the current char is anything else
     else
       ciphered_output[current_char_index] = current_char
     end
@@ -109,17 +104,19 @@ end
 
 # Performs deciphering algorithm
 def perform_caesar_deciphering(text_to_be_deciphered)
-  alphabet_letters = ("A".."Z")
-  valid_digits = ("0".ord.."9".ord)
+  # Regex used for easily identifying if a char is number, letter or else
+  letters_regex = /[a-zA-Z]/
+  digits_regex = /[0-9]/
+  # Use input as uppercase char-per-char array for easier manipulation
   ciphered_chars = text_to_be_deciphered.upcase.split("")
   unciphered_chars = Array.new(ciphered_chars.length)
   # Loop through the ciphered chars getting the deciphered analog
   ciphered_chars.each_with_index do |current_char, current_char_index|
     # If the current char is a letter
-    if alphabet_letters.include?(current_char)
+    if letters_regex.match?(current_char)
       unciphered_chars[current_char_index] = decipher_letters(current_char)
     # If the current char is a number
-    elsif valid_digits.include?(current_char.ord)
+    elsif digits_regex.match?(current_char)
       unciphered_chars[current_char_index] = decipher_numbers(current_char.to_i)
     # If the current char is any other thing (puntuaction, etc)
     else
@@ -175,17 +172,19 @@ end
 # Convert the ciphered/deciphered string to its original case
 def adjust_to_original_case(uppercase_chars, original_string)
   original_chars = original_string.split("")
-  uppercase_ascii_range = ("A".ord.."Z".ord)
+  correct_case_chars = Array.new(original_chars.length)
+  uppercase_alphabet = /[A-Z]/
   # Loop through the original unciphered string, checking if the ciphered
   # analog has different case and performing the needed tweaks
   original_chars.each_with_index do |current_char, current_char_index|
-    unless uppercase_ascii_range.include?(current_char.ord)
-      uppercase_chars[current_char_index] = uppercase_chars[current_char_index].downcase
+    # Unless the current original char is uppercase
+    unless uppercase_alphabet.match?(current_char)
+      correct_case_chars[current_char_index] = uppercase_chars[current_char_index].downcase
     else
-      uppercase_chars[current_char_index] = uppercase_chars[current_char_index]
+      correct_case_chars[current_char_index] = uppercase_chars[current_char_index]
     end
   end
-  uppercase_chars.join
+  correct_case_chars.join
 end
 
 # Main
