@@ -83,18 +83,33 @@ def perform_output_method(hash_count_words)
     when "f"
       output_path = get_valid_output_file
       output_file = File.new(output_path, "w")
-      write_count_information(hash_count_words, output_file)
-    # TODO: IMPLEMENT OUTPUTTING TO CONSOLE
+      print_count_information(hash_count_words, output_file, output_method)
+      puts "All words count written to the file."
+    # For console output
+    when "c"
+      puts "Words occurrences: "
+      print_count_information(hash_count_words, output_method)
   end
 end
 
-# Method to print the words count information on a readable format
-def write_count_information(count_hash, file_output)
+# Method to print the words count information based on the selected output
+# method; hence, the supply of an argument for the out_file parameter is
+# optional (in case the user wants to print information to the console)
+def print_count_information(count_hash, *out_file, desired_output_method)
   count_hash.each_pair do |key, value|
-    # Write the count hash on the file
-    information = "Number of '#{key}' occurrences: #{value}\n"
-    File.write(file_output, information, mode: "a")
-    # TODO: IMPLEMENT BETTER NEWLINE SYSTEM
+    # Define where to print the output based on the desired output method
+    case desired_output_method
+      # For file output
+      when "f"    
+        # Write the count hash information on the file
+        information = "Number of '#{key}' occurrences: #{value}\n"
+        # As an optional parameter, out_file has an Array type
+        File.write(out_file.first, information, mode: "a")
+      # For console output
+      when "c"
+        # Write the count hash information to the console
+        puts "Number of '#{key}' occurrences: #{value}"
+    end
   end
 end
 
@@ -109,18 +124,15 @@ def get_valid_file_content
     file_exist = File.exist?(file_path)
     file_readable = File.readable?(file_path)
     is_txt = File.extname(file_path) == ".txt"
-    absolute_path = File.absolute_path?(file_path)
     # Check if file is valid; if not, give meaningful information
-    if file_exist and file_readable and is_txt and absolute_path
+    if file_exist and file_readable and is_txt
       is_valid_file = true
-    elsif not file_exist and file_readable and is_txt and absolute_path
+    elsif not file_exist
       puts "This file doesn't exist under this path.\nCheck the path."
-    elsif not file_readable and file_exist and is_txt and absolute_path
+    elsif not file_readable
       puts "The OS can't read this file contents."
-    elsif not is_txt and file_exist and file_readable and absolute_path
+    elsif not is_txt
       puts "This file isn't a .txt one.\nCheck the file extension."
-    elsif not absolute_path
-      puts "This path is not an absolute path."
     end
   end
   # Read the file and return its contents
@@ -139,20 +151,25 @@ def get_valid_output_file
     is_directory = File.directory?(output_file_path)
     is_valid_path = true if is_absolute_path and is_directory
   end
-  # TODO: IMPLEMENT CHECKING IF PATH ENDS WITH '/'
-  # Give file a default name, including it on the output path
-  output_file_path + "word_count.txt"
+  # Add '/' ending to the path if it doesn't end on '/', in order to keep
+  # the folder structure when adding the output file name
+  output_file_path = output_file_path + "/" if output_file_path.chars.last != "/"
+  output_file_path = output_file_path + "word_count.txt"
 end
 
 # Main
 keep_running = ""
 until keep_running == "n" do
+  system "clear"
   words_of_interest = get_words_of_interest
+  print "\n"
   input_text = get_text_to_count_words
+  print "\n"
   # Use the input as word-per-word array for easier manipulation
   words_count = get_words_count(words_of_interest.split, input_text.split)
   # Perform the appropiate output method
   perform_output_method(words_count)
+  print "\n"
   puts "Do you want to check another words on another text?"
   print "Type any character different from 'n' to continue: "
   keep_running = gets.chomp
